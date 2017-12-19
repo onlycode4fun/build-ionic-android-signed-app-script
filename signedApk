@@ -1,0 +1,49 @@
+#!/bin/bash
+echo Iniciando Script
+
+echo Introduce el nombre de la aplicación en camelCase:
+
+read nombreApp
+
+export PATH=$PATH:/opt/gradle/gradle-4.3.1/bin 
+
+#ionic cordova platform rm android
+#ionic cordova platform add android
+#ionic cordova resources android
+
+#ANDROID_HOME="/home/esteban/Android/Sdk" ionic cordova build --prod --release android
+
+keyStore="/home/esteban/keyStoreApps/firmaReleaseapk$nombreApp.jks"
+alias_name="appKoibox$nombreApp"
+
+storepass="appsKoiboxKeystore"
+organizacion="Software Koibox S.L."
+
+echo keytool -genkey -v -keystore $keyStore -alias $alias_name -keyalg RSA -keysize 2048 -validity 10000
+
+keytool -genkey -v -keystore $keyStore -alias $alias_name -storepass $storepass -keyalg RSA -keysize 2048 -validity 10000 <<!
+$organizacion
+$organizacion
+$organizacion
+$organizacion
+$organizacion
+ES
+si
+!
+
+pathApk="platforms/android/build/outputs/apk/"
+nameApk="android-release-unsigned.apk"
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $keyStore $pathApk$nameApk $alias_name <<!
+$storepass
+!
+
+
+nameSignedApk="android-release-signed.apk"
+rm $pathApk$nameSignedApk
+/home/esteban/Android/Sdk/build-tools/27.0.1/./zipalign -v 4 $pathApk$nameApk $pathApk$nameSignedApk 
+
+keytool -exportcert -alias $alias_name -keystore $keyStore -storepass $storepass | openssl sha1 -binary | openssl base64
+
+mv platforms/android/build/outputs/apk/$nameSignedApk /home/esteban/Escritorio
+
+echo Apk finalizada
