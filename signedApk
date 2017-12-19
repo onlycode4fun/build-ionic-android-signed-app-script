@@ -7,17 +7,17 @@ read nombreApp
 
 export PATH=$PATH:/opt/gradle/gradle-4.3.1/bin 
 
-#ionic cordova platform rm android
-#ionic cordova platform add android
-#ionic cordova resources android
+ionic cordova platform rm android
+ionic cordova platform add android
+ionic cordova resources android
 
-#ANDROID_HOME="/home/esteban/Android/Sdk" ionic cordova build --prod --release android
+ANDROID_HOME="/home/esteban/Android/Sdk" ionic cordova build --prod --release android
 
 keyStore="/home/esteban/keyStoreApps/firmaReleaseapk$nombreApp.jks"
-alias_name="appKoibox$nombreApp"
+alias_name="appAlias$nombreApp"
 
-storepass="appsKoiboxKeystore"
-organizacion="Software Koibox S.L."
+storepass="appsKeystore"
+organizacion="Mi organizacion S.L."
 
 echo keytool -genkey -v -keystore $keyStore -alias $alias_name -keyalg RSA -keysize 2048 -validity 10000
 
